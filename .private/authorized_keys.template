@@ -1,0 +1,2 @@
+ecdsa-sha2-nistp521 AAAAE2VjZH...<a first ssh key mandatory>  Rename this template to authorized_keys
+ecdsa-sha2-nistp521 AAAAE2VjZH...<more keys optional>         Add all keys that should have admin access

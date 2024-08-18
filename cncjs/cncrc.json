@@ -1,0 +1,67 @@
+"ports": [
+    {
+        "path": "/dev/ttyUSB0",
+        "manufacturer": "ChronosMaker"   
+    },
+    {
+        "path": "/dev/ttyGSIM",
+        "manufacturer": "Grbl11 sim"
+    }
+  ],
+  "baudrates": [115200],
+  "mountPoints": [
+    {
+      "route": "/widget",
+      "target": "https://cncjs.github.io/cncjs-widget-boilerplate/v1/"
+    }
+  ],
+  "accessTokenLifetime": "5d",
+  "allowRemoteAccess": false,
+  "watchDirectory": "/mnt/cncfiles",
+  "state": {
+    "checkForUpdates": true
+  },
+  "commands": [
+    {
+      "title": "Shutdown",
+      "commands": "sudo /sbin/shutdown"
+    },
+    {
+      "title": "Reboot",
+      "commands": "sudo /sbin/reboot"
+    }
+  ],
+  "events": [],
+  "macros": [        
+  {
+    "id": "d784a67f-92ae-43f7-982a-e504167fd719",
+    "mtime": 1653646820266,
+    "name": "Laser mounted",
+    "content": "$32=1"
+  },
+  {
+    "id": "2e72f06e-9349-4651-9005-99336cfd5427",
+    "mtime": 1653646836166,
+    "name": "Spindle mounted",
+    "content": "$32=0"
+  },
+  {
+    "id": "8487b894-adff-408e-a7b7-8839ddc32238",
+    "mtime": 1654355108362,
+    "name": "Auto level",
+    "content": "(#autolevel)"
+  },
+  {
+    "id": "8487b894-adff-408e-a7b7-8839ddc32239",
+    "mtime": 1654355108363,
+    "name": "Auto level (finer)",
+    "content": "(#autolevel D5.0 H2.0 F50)"
+  },
+  {
+    "id": "bd717f67-3567-4297-ac70-227d30881d74",
+    "mtime": 1654355156012,
+    "name": "Auto-level (re-apply)",
+    "content": "(#autolevel_reapply)"
+  }],
+  "users": []
+}

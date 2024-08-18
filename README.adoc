@@ -1,0 +1,60 @@
+= Raspberry pi cnc js image 
+
+This is a raspberry pi image creation automation project for cnc.js setup on Rpi with 64 bits
+using HashiCorp packer, using an upgraded version of the popular `https://github.com/mkaczanowski/packer-builder-arm` plugin 
+(see https://gitub.com/brederle/packer-plugin-armflash)
+
+
+== Raspberry PI host image creation
+Please submit bugs and wishes under https://github.com/brederle/packer-image-cncjs/issues.
+
+The repo contains a pre-configured `.devcontainer` with the required packer tooling and the
+packer-plugin-armflash plugin preconfigured. To use the DevContainer:
+
+1. Install the Microsoft-supported VSCode devcontainer extension
+
+2. Load the repo folder wth VSCode 
+
+3. Push _STRG+SHIFT+P > Dev Containers: Rebuild and Reopen in Container_
+
+Eventually, a terminal opens up where packer can directly be started as described below.
+
+=== Simple default image
+Without setting any variables, a universal image is build.
+----
+packer build .
+----
+
+Neither wifi nor ssh key access is configured by default, make the corresponding settings when
+uploading `cncpi-pi-arm64.img` via Raspberry Pi imager.
+
+=== Custom, personal image
+For a custom image build, configure your (private) parameters under `.private`.
+You can copy and extend the `.template` files:
+
+* `authorized_keys` the well-known ssh configuration for key access +
+  For security reasons,  ssh is using contemporary elliptic crypto methods and prefers elliptic
+  keys.
+
+* `authorized_keys` the well-known ssh configuration for key access +
+  For security reasons,  ssh is using contemporary elliptic crypto methods and prefers elliptic
+  keys.
+
+Look at `raspi.vars.pkr.hcl` and `cncpi.vars.pkr.hcl` for the documentation of the different setting
+parameters and their defaults.
+
+Run packer with:
+----
+packer build -var-file=".private/settings.pkrvars.hcl" .
+----
+
+=== Test mounting
+Before flashing the image, you can review the image content by mounting the partitions:
+----
+losetup --find --partscan --show cncpi-pi-arm64.img
+mount -o discard /dev/loop0p1 /media/img
+----
+
+* `/dev/loopXp1`: boot partition (new bookworm layout)
+
+* `/dev/loopXp2`: workload partition

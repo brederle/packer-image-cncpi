@@ -1,0 +1,16 @@
+#comment1       = "Rename the template to settings.pkr.hcl"
+#comment2       = "see raspi.vars.pkr.hcl for details" 
+hostname        = "<your hostname>"
+wifi_ssid       = "<your wifi name>"
+wifi_passphrase = "<your wifi psk>"
+wifi_country    = "DE"
+timezone        = "Europe/Berlin"
+locale          = "de_DE"
+keymap          = "de"
+boottime        = "03:00"
+
+user = "<my main user, other than raspi!>"
+authorized_keyfile = ".private/authorized_keys"
+
+#comment3       = "Special cncpi settings, see cncpi.vars.pkr.hcl"
+gpumem = 64

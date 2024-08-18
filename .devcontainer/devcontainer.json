@@ -1,0 +1,7 @@
+{
+    "name": "RaspiPacker",
+    "image": "brederle/packer-armflash",
+    "privileged": true,
+    "runArgs": [ "-v", "/dev:/dev" ],
+    "overrideCommand": false
+}
