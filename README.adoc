@@ -36,7 +36,7 @@ You can copy and extend the `.template` files:
   For security reasons,  ssh is using contemporary elliptic crypto methods and prefers elliptic
   keys.
 
-* `authorized_keys` the well-known ssh configuration for key access +
+* `settings.pkrvars.hcl` the well-known ssh configuration for key access +
   For security reasons,  ssh is using contemporary elliptic crypto methods and prefers elliptic
   keys.
 
@@ -47,6 +47,8 @@ Run packer with:
 ----
 packer build -var-file=".private/settings.pkrvars.hcl" .
 ----
+
+WARNING: Please avoid to check in credential and other private setting in public repos!
 
 === Test mounting
 Before flashing the image, you can review the image content by mounting the partitions:
