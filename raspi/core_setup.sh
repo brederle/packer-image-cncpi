@@ -3,10 +3,18 @@
 ###
 # Core settings of the modified image
 #
-BOOTDIR=$(/usr/lib/raspberrypi-sys-mods/get_fw_loc)
+source /tmp/utils.sh
+
+# disable forced hdmi plug in on first boot
+# essential to avoid stalled first boot
+SETKEY hdmi_force_hotplug 1 ${BOOTDIR}/config.txt
+
+# disable automatic display overlay loading
+SETKEY display_auto_detect 0 ${BOOTDIR}/config.txt
 
 # disable 3d overlay for smooth work with vscode
-
+COMMENT "vc4-kms-v3d" ${BOOTDIR}/config.txt
+COMMENT "max_framebuffers=" ${BOOTDIR}/config.txt
 
 # replace hostname
 cat << SECTION > ${BOOTDIR}/custom.toml 
