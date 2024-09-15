@@ -53,3 +53,23 @@ variable "gpumem" {
   sensitive   = false
 }
 
+variable "usbcam_dev" {
+  description = "Camera device (usb)"
+  type        = string
+  default     = ""
+  sensitive   = false    
+}
+
+variable "picam_nr" {
+  description = "Camera device (rpi native or usb)"
+  type        = number
+  default     = 0
+  sensitive   = false    
+}
+
+variable "picam_extraparams" {
+  description = "Streamer commandline tuning parameters"
+  type        = string
+  default     = ""
+  sensitive   = false    
+}
