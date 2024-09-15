@@ -33,7 +33,7 @@ source "armflash" "cncpi" {
     type         = "83"
   }
   image_path       = "cncpi-pi-arm64.img"
-  image_size       = "4G"
+  image_size       = "5G"
   image_chroot_env = ["PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"]
 
   # for MAC M1 build
@@ -47,6 +47,13 @@ source "armflash" "cncpi" {
 
 build {
   sources = ["source.armflash.cncpi"]
+
+  // deposit the helper functions for use in
+  // the following scripts
+  provisioner "file" {
+    source      = "raspi/utils.sh"
+    destination = "/tmp/utils.sh"
+  }
 
   // General raspberry pi image modifications and hardenings
   provisioner "shell" {
@@ -87,8 +94,8 @@ build {
     destination = "/etc/ssh/sshd_config"
   }
 
-  # an empty file is copy by default
-  # to activate password authentication
+  // an empty file is copy by default
+  // to activate password authentication
   provisioner "file" {
     source      = "${var.authorized_keyfile}"
     destination = "/tmp/authorized_keys"
@@ -113,6 +120,19 @@ build {
   }
 
 
+  // libcamera-vid livecam ---------
+  provisioner "shell" {
+    env = {
+      LOCALE        = "${var.locale}"
+      ENCODING      = "${var.encoding}"
+      CNCUSER       = "${var.cncjs_user}"
+      GPU_MEM       = "${var.gpumem}"
+      USBCAM_DEV    = "${var.usbcam_dev}"
+      PICAM_NR      = "${var.picam_nr}"
+    }
+    script = "raspi/cam_setup.sh"
+  }
+
   // CIFS mount ---------------------
   provisioner "shell" {
     env = {
@@ -126,7 +146,7 @@ build {
     script = "cncjs/cncjs_mount.sh"
   }
 
-  // cnc.js installation ---------------------
+//   // cnc.js installation ---------------------
 
   // install fqdn warning blocker for sudo
   provisioner "file" {
@@ -153,7 +173,14 @@ build {
     script = "cncjs/cncjs_user.sh"
   }
 
-  // install as CNCUSER, not as root
+
+  // cncpi specific setup
+  provisioner "file" {
+    source      = "cncjs/cncrc.json"
+    destination = "/home/${var.cncjs_user}/.cncrc"
+  }
+
+  // install cncjs as CNCUSER, not as root
   provisioner "shell" {
     execute_command = "sudo -u ${var.cncjs_user} sh -c '{{ .Vars }} {{ .Path }}'"
     env = {
@@ -165,14 +192,29 @@ build {
     script = "cncjs/cncjs_install.sh"
   }
 
-  // set up the service
-
-  // cncpi specific setup
-  provisioner "file" {
-    source      = "cncjs/cncrc.json"
-    destination = "/home/${var.cncjs_user}/.cncrc"
+  // autolevel is a nodejs app as cncjs in cncjs_user home
+  provisioner "shell" {
+    execute_command = "sudo -u ${var.cncjs_user} sh -c '{{ .Vars }} {{ .Path }}'"
+    env = {
+      LOCALE        = "${var.locale}"
+      ENCODING      = "${var.encoding}"
+      CNCUSER       = "${var.cncjs_user}"
+    }
+    script = "cncjs/cncjs_install_autolevel.sh"
   }
 
+
+  // grbl-sim requires root for installation
+  provisioner "shell" {
+    env = {
+      LOCALE        = "${var.locale}"
+      ENCODING      = "${var.encoding}"
+      CNCUSER       = "${var.cncjs_user}"
+    }
+    script = "cncjs/cncjs_install_sim.sh"
+  }
+
+  // set up the services
   provisioner "shell" {
     env = {
       LOCALE        = "${var.locale}"
@@ -187,8 +229,6 @@ build {
     inline = ["echo Remove sudo dns resolution blocker",
               "rm -f /etc/sudoers.d/020_sudo_no_fqdn"]
   }
-
-  // cam installation ---------------------
 
   // set sdcard_device != /dev/null in variables
   // to write an sdcard directly after successful build
