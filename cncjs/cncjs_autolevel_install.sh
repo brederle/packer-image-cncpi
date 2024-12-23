@@ -8,10 +8,13 @@ export LC_ALL=${LOCALE}.${ENCODING}
 export USERDIR=/home/${CNCUSER}
 
 ###
-# Install cnc.js as extra cncjs CNCUSER
+# Install auto leveler
 #
-echo "Installing cncjs packages for user " ${CNCUSER}
+echo "Installing autoleveler for user" ${CNCUSER}
 mkdir -p ${USERDIR}/.npm
 npm config set prefix ${USERDIR}/.npm
-npm_config_loglevel=silent npm install -g cncjs@${CNCJS_VERSION} --unsafe-perm
-# allow fqdn resolution in final image again
+git clone -q https://github.com/kreso-t/cncjs-kt-ext.git ${USERDIR}/cncjs-kt-ext
+cd ${USERDIR}/cncjs-kt-ext
+npm_config_loglevel=silent npm install
+rm -rf ${USERDIR}/cncjs-kt-ext
+

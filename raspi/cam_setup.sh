@@ -45,9 +45,20 @@ else
         gstreamer1.0-plugins-bad\
         gstreamer1.0-plugins-ugly\
         gstreamer1.0-libav\
-        gstreamer1.0-tools
+        gstreamer1.0-tools\
+        libgstrtspserver-1.0\
+        cmake
 
+    cd /tmp
+    git clone https://github.com/sfalexrog/gst-rtsp-launch
+    mkdir -p /tmp/gst-rtsp-launch/build
+    cd /tmp/gst-rtsp-launch/build
+    cmake ..
+    make install
+    rm -rf /tmp/gst-rtsp-launch
 
+    # see `v4l2-ctl --list-formats-ext` for available input formats
+    # use `gst-inspect-1.0 v4l2convert` for supported plugin parameters
     cat > /etc/systemd/system/livecam@.service <<SERVICE_EOF
 [Unit]
 Description=Real-time streaming cam service
@@ -55,12 +66,13 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/gst-launch-1.0 -vv -e v4l2src device="${USBCAM_DEV}" ! "video/x-raw,width=1280,height=720" ! queue ! omxh264enc  ! h264parse ! rtph264pay ! tcpsink host=0.0.0.0 port=9000
+ExecStart=/usr/local/bin/gst-rtsp-launch --port=9000 "( v4l2src device=/dev/video0 ! image/jpeg, width=1280, height=720, framerate=30/1 ! queue ! rtpjpegpay name=pay0 pt=96 )"
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 User=%i
 Restart=on-abort
 RestartPreventExitStatus=255
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

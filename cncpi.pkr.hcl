@@ -173,13 +173,6 @@ build {
     script = "cncjs/cncjs_user.sh"
   }
 
-
-  // cncpi specific setup
-  provisioner "file" {
-    source      = "cncjs/cncrc.json"
-    destination = "/home/${var.cncjs_user}/.cncrc"
-  }
-
   // install cncjs as CNCUSER, not as root
   provisioner "shell" {
     execute_command = "sudo -u ${var.cncjs_user} sh -c '{{ .Vars }} {{ .Path }}'"
@@ -192,6 +185,22 @@ build {
     script = "cncjs/cncjs_install.sh"
   }
 
+  // cncpi default settings
+  provisioner "file" {
+    source      = "cncjs/cncrc.json"
+    destination = "/home/${var.cncjs_user}/.cncrc"
+  }
+
+  provisioner "shell" {
+    env = {
+      LOCALE        = "${var.locale}"
+      ENCODING      = "${var.encoding}"
+      CNCJS_VERSION = "${var.cncjs_version}"
+      CNCUSER       = "${var.cncjs_user}"
+    }
+    script = "cncjs/cncjs_service.sh"
+  }
+
   // autolevel is a nodejs app as cncjs in cncjs_user home
   provisioner "shell" {
     execute_command = "sudo -u ${var.cncjs_user} sh -c '{{ .Vars }} {{ .Path }}'"
@@ -200,9 +209,17 @@ build {
       ENCODING      = "${var.encoding}"
       CNCUSER       = "${var.cncjs_user}"
     }
-    script = "cncjs/cncjs_install_autolevel.sh"
+    script = "cncjs/cncjs_autolevel_install.sh"
   }
 
+  provisioner "shell" {
+    env = {
+      LOCALE        = "${var.locale}"
+      ENCODING      = "${var.encoding}"
+      CNCUSER       = "${var.cncjs_user}"
+    }
+    script = "cncjs/cncjs_autolevel_service.sh"
+  }
 
   // grbl-sim requires root for installation
   provisioner "shell" {
@@ -211,17 +228,16 @@ build {
       ENCODING      = "${var.encoding}"
       CNCUSER       = "${var.cncjs_user}"
     }
-    script = "cncjs/cncjs_install_sim.sh"
+    script = "cncjs/cncjs_sim_install.sh"
   }
 
-  // set up the services
   provisioner "shell" {
     env = {
       LOCALE        = "${var.locale}"
       ENCODING      = "${var.encoding}"
       CNCUSER       = "${var.cncjs_user}"
     }
-    script = "cncjs/cncjs_config.sh"
+    script = "cncjs/cncjs_sim_service.sh"
   }
 
   // remove fqdn warning blocker for sudo
