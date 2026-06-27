@@ -10,12 +10,10 @@ export LANGUAGE=${LOCALE}.${ENCODING}
 export LANG=${LOCALE}.${ENCODING}
 export LC_ALL=${LOCALE}.${ENCODING}
 
-echo "### Install cnc.js running as ${CNCJSUSER} ###"
+echo "### Register cnc.js in PM2 ###"
 
 CNCJSUSERHOME=$(eval echo "~$CNCJSUSER")
 
-# Install cnc.js 
-mkdir -p ${CNCJSUSERHOME}/.npm
-npm config set prefix ${CNCJSUSERHOME}/.npm
-npm_config_loglevel=silent npm install -g cncjs@${CNCJSVERSION} --unsafe-perm
-
+# register cnc.js
+/usr/bin/pm2 start ${CNCJSUSERHOME}/.npm/bin/cncjs -- --host 0.0.0.0 -p ${CNCJSPORT} --config ${CNCJSUSERHOME}/.cncrc
+/usr/bin/pm2 save --silent

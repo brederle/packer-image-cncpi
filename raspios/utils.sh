@@ -1,5 +1,13 @@
-# bootdir depends on raspianos version
-BOOTDIR=$(/usr/lib/raspberrypi-sys-mods/get_fw_loc)
+
+### 
+# Utilities for remote configuration or raspbian/armbian
+#
+
+# automatically determin the location of the boot directory
+# for overlay configuration
+# TODO: Make it more portable for armbian
+RPIBOOTDIR=$(/usr/lib/raspberrypi-sys-mods/get_fw_loc 2>/dev/null)
+BOOTDIR=${RPIBOOTDIR:="/boot"}
 
 function SETKEY() {
     local kvkey=$1
@@ -44,8 +52,26 @@ function UNCOMMENT() {
     sed -i "/${linematch}/s/^[#[:space:]]*#//g" ${filename}
 }
 
+function UNCOMMENTWS() {
+    linematch=$1
+    filename=$2
+    sed -i "/${linematch}/s/^[#[:space:]]*//g" ${filename}
+}
+
 function COMMENT() {
     linematch=$1
     filename=$2
     sed -i "/${linematch}/s/^/#/" ${filename}
+}
+
+function ADDCMDLINE() {
+    value=$1
+    filename=$2
+    sed -i -e "\${s/\$/ $value/}" ${filename}
+}
+
+function RMCMDLINE() {
+    linematch=$1
+    filename=$2
+    sed -i "s/${linematch}[^[:space:]]*[[:space:]]*//g" ${filename}
 }

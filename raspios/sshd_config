@@ -21,16 +21,17 @@ X11Forwarding no
 Subsystem       sftp    /usr/libexec/openssh/sftp-server
 #UseDNS no
 Ciphers aes256-ctr,aes192-ctr,aes128-ctr
-KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256,mlkem768x25519-sha256,sntrup761x25519-sha512
 AllowTcpForwarding yes
 GatewayPorts no
 X11UseLocalhost yes
 AllowAgentForwarding no
 PermitTunnel no
-LogLevel VERBOSE
+LogLevel INFO
 RSAAuthentication no
 PubkeyAuthentication yes
 PermitEmptyPasswords no
+PermitRootLogin no
 RhostsRSAAuthentication no
 HostbasedAuthentication no
 IgnoreRhosts yes

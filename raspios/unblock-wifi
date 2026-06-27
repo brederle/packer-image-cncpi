@@ -1,0 +1,41 @@
+#!/bin/bash
+set -euo pipefail
+
+log_info() { logger -t unblock-wifi -p daemon.info "$*"; }
+
+log_error() { logger -t unblock-wifi -p daemon.err "$*"; }
+
+rfkill_check() {
+  rfkill list wifi 2>/dev/null | awk -F': ' '
+    BEGIN {state="no"}
+    /Hard blocked/ && $2=="yes" {state="hard"; exit}
+    /Soft blocked/ && $2=="yes" {state="soft"}
+    END {print state}'
+}
+
+
+if ! command -v nmcli >/dev/null 2>&1; then
+    log_info "NetworkManager not installed, exiting"
+    exit 0
+fi
+
+blocked=$(rfkill_check)
+case "$blocked" in
+  no)
+    log_info "Wifi radio healthy, not blocked"
+    ;;
+  hard)
+    log_error "Wi-Fi is hard blocked; cannot unblock via software."
+    exit -1
+    ;;
+  soft)
+    log_info "rfkill unblock wifi, reenable wifi (e.g. on firstrun)"
+    rfkill unblock wifi || true
+    ;;
+esac
+
+# enforce radio on
+nmcli radio wifi on || true
+
+
+
