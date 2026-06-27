@@ -1,7 +1,7 @@
 variable "hostname" {
-  description = "The hostname identifier of your cncpi."
+  description = "The hostname identifier of your armbian."
   type        = string
-  default     = "cncpi"
+  default     = "cncjs"
   sensitive   = false
 }
 
@@ -33,14 +33,14 @@ variable "wifi_country" {
 # General system settings
 #
 variable "timezone" {
-  description = "Timezone to run the cncpi in"
+  description = "Timezone to run the armbian in"
   type        = string
   default     = "UTC"
   sensitive   = false
 }
 
 variable "locale" {
-  description = "Language/locale setting the cncpi uses"
+  description = "Language/locale setting the armbian uses"
   type        = string
   default     = "en_GB"
   sensitive   = false
@@ -72,38 +72,31 @@ variable "boottime" {
 # Service provider user 
 #
 variable "user" {
-  description = "Non-root service account name the cncpi runs on"
+  description = "Non-root service account name the armbian runs on"
   type        = string
-  default     = "cncpi"
+  default     = "armour"
   sensitive   = false
 }
 
 variable "uid" {
-  description = "Non-root service account name the cncpi runs on"
+  description = "Non-root service account name the Armbian runs on"
   type        = number
-  default     = 4778
+  default     = 1778
   sensitive   = false
 }
 
 variable "user_description" {
   description = "Non-root service account user description"
   type        = string
-  default     = "cncpi service user"
+  default     = "Armbian main user"
   sensitive   = false
 }
 
 variable "authorized_keyfile" {
   description = "Path to the `authorized_keys` file if keys sould be used."
   type        = string
-  default     = ".cred/authorized_keys"
+  default     = ".private/ssh/authorized_keys"
   sensitive   = false
-}
-
-variable "password" {
-  description = "Non-root service account password in case no authorized_keys are given"
-  type        = string
-  default     = "2keep1D_fault"
-  sensitive   = true
 }
 
 variable "sdcard_device" {
