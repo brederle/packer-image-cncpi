@@ -3,5 +3,8 @@
     "image": "brederle/packer-armflash",
     "privileged": true,
     "runArgs": [ "-v", "/dev:/dev" ],
-    "overrideCommand": false
+    "overrideCommand": false,
+    "remoteEnv": {
+        "PACKER_LOG": "0"
+    }
 }

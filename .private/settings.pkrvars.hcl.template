@@ -1,16 +1,30 @@
-#comment1       = "Rename the template to settings.pkr.hcl"
-#comment2       = "see raspi.vars.pkr.hcl for details" 
-hostname        = "<your hostname>"
-wifi_ssid       = "<your wifi name>"
-wifi_passphrase = "<your wifi psk>"
+#comment1        = "Personal raspberry settings"
+#comment2        = "see raspi.vars.pkr.hcl for details" 
+hostname        = "machinename"
+wifi_ssid       = "wifissid"
+wifi_passphrase = "5****"
 wifi_country    = "DE"
 timezone        = "Europe/Berlin"
 locale          = "de_DE"
 keymap          = "de"
 boottime        = "03:00"
 
-user = "<my main user, other than raspi!>"
+user               = "miller"
+uid                = 1007
+user_description   = "Lowrider power admin"
 authorized_keyfile = ".private/authorized_keys"
 
-#comment3       = "Special cncpi settings, see cncpi.vars.pkr.hcl"
-gpumem = 64
+#comment3       = "CNCjs + CNC firmware settings"
+node_version   = "24"
+cncjs_version  = "1.11.1"
+marlin_version = "lts-2.1.2"
+cncjs_uid      = 1008
+cncjs_user     = "cncjs"
+cncjs_port     = 8000
+
+#comment5       = "CIFS mount (no mount if not configured)"
+cifs_path      = "//nas.box/somedir"
+cifs_user      = "cncjs"
+cifs_password  = "C2j*****"
+
+#sdcard_device   = "/dev/diskX"
