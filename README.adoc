@@ -1,4 +1,4 @@
-= Raspberry pi cnc js image 
+= Raspberry pi cncjs image 
 
 This is a raspberry pi image creation automation project for cnc.js setup on Rpi with 64 bits
 using HashiCorp packer, using an upgraded version of the popular `https://github.com/mkaczanowski/packer-builder-arm` plugin 
@@ -40,7 +40,7 @@ You can copy and extend the `.template` files:
   For security reasons,  ssh is using contemporary elliptic crypto methods and prefers elliptic
   keys.
 
-Look at `raspi.vars.pkr.hcl` and `cncpi.vars.pkr.hcl` for the documentation of the different setting
+Look at `raspios.vars.pkr.hcl` and `IMG.vars.pkr.hcl` for the documentation of the different setting
 parameters and their defaults.
 
 Run packer with:
@@ -50,13 +50,38 @@ packer build -var-file=".private/settings.pkrvars.hcl" .
 
 WARNING: Please avoid to check in credential and other private setting in public repos!
 
-=== Test mounting
+
+=== Flashing on Unix systems (Mac/Linux)
+
+```bash
+diskutl list
+sudo diskutil unmountDisk /dev/diskX
+sudo dd if=./lowrider3-cncjs-raspi-arm64.img of=/dev/rdiskX bs=4M
+```
+where `/dev/diskX` is the disk with the size of your eMMC listed in the first step.
+Note: Using `rdisk` and `bs=4M` optimized flashing speed.
+
+=== Detail Packer log
+`export PACKER-LOG=1`
+
+You can already set the variable globally in devcontainer.json to run it as default.
+
+
+=== Test mount image in devcontainer
 Before flashing the image, you can review the image content by mounting the partitions:
 ----
-losetup --find --partscan --show cncpi-pi-arm64.img
-mount -o discard /dev/loop0p1 /media/img
+export IMG_LOOP=$(losetup --find --partscan --show lowrider3-cncjs-raspi-arm64.img)
+mount -o discard ${IMG_LOOP}p2 /media/img
+mount -o discard ${IMG_LOOP}p1 /media/img/boot/firmware
 ----
 
+With:
 * `/dev/loopXp1`: boot partition (new bookworm layout)
-
 * `/dev/loopXp2`: workload partition
+
+To remove the environnment:
+----
+umount ${IMG_LOOP}p1
+umount ${IMG_LOOP}p2
+losetup --detach ${IMG_LOOP}
+----
